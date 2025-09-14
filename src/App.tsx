@@ -70,7 +70,7 @@ function App() {
           <div className="flex items-center justify-between">
             <h2 className="text-xl">Upload de Arquivo</h2>
             {selectedFile && processingState !== "idle" && (
-              <Button variant="outline" onClick={resetProcess}>
+              <Button variant="default" onClick={resetProcess}>
                 Novo Upload
               </Button>
             )}

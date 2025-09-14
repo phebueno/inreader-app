@@ -77,7 +77,7 @@ export function FileUpload({ onFileSelect, disabled }: FileUploadProps) {
               </div>
               {!disabled && (
                 <Button
-                  variant="ghost"
+                  variant="default"
                   size="sm"
                   onClick={removeFile}
                   className="h-8 w-8 p-0"
