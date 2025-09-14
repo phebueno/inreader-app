@@ -54,7 +54,7 @@ export function FileUpload({ onFileSelect, disabled }: FileUploadProps) {
   }, []);
 
   return (
-    <Card className={`p-8 transition-all duration-200 ${
+    <Card className={`relative p-8 transition-all duration-200 ${
       isDragOver && !disabled 
         ? 'border-primary bg-primary/5' 
         : 'border-dashed border-2'
