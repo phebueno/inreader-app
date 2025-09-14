@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/FileUpload";
 import { Card } from "@/components/ui/card";
 import { StepProgress } from "@/components/StepProgress";
+import { MessageSquare } from "lucide-react";
 
 type ProcessingState =
   | "idle"
@@ -65,23 +66,71 @@ function App() {
   }, [processingState]);
 
   return (
-    <>
-      <Card className="p-6">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl">Upload de Arquivo</h2>
-            {selectedFile && processingState !== "idle" && (
-              <Button variant="default" onClick={resetProcess}>
-                Novo Upload
-              </Button>
-            )}
-          </div>
-
-          <FileUpload onFileSelect={handleFileSelect} disabled={false} />
+    <div className="min-h-screen bg-background p-4 w-full">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl sm:text-3xl">InReader</h1>
+          <p className="text-muted-foreground">
+            Faça upload de arquivos para transcrição e análise por IA
+          </p>
         </div>
-      </Card>
-      <StepProgress currentStep={currentStep}/>
-    </>
+        <Card className="p-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl">Upload de Arquivo</h2>
+              {selectedFile && processingState !== "idle" && (
+                <Button variant="default" onClick={resetProcess}>
+                  Novo Upload
+                </Button>
+              )}
+            </div>
+
+            <FileUpload onFileSelect={handleFileSelect} disabled={false} />
+          </div>
+        </Card>
+        {currentStep > 0 && (
+          <Card className="p-6">
+            <div className="space-y-6">
+              <h2 className="text-xl">Progresso do Processamento</h2>
+              <StepProgress currentStep={currentStep} />
+
+              {processingState === "uploading" && (
+                <div className="text-center">
+                  <p className="text-primary">Fazendo upload do arquivo...</p>
+                </div>
+              )}
+
+              {processingState === "transcribing" && (
+                <div className="text-center">
+                  <p className="text-primary">Transcrevendo conteúdo...</p>
+                </div>
+              )}
+
+              {processingState === "preparing" && (
+                <div className="text-center">
+                  <p className="text-primary">
+                    Preparando para análise por IA...
+                  </p>
+                </div>
+              )}
+
+              {processingState === "ready" && (
+                <div className="text-center space-y-4">
+                  <p className="text-green-600">Processamento concluído!</p>
+                  <Button
+                    onClick={() => {}}
+                    className="flex items-center space-x-2"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    <span>Iniciar Chat com IA</span>
+                  </Button>
+                </div>
+              )}
+            </div>
+          </Card>
+        )}
+      </div>
+    </div>
   );
 }
 
