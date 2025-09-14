@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/FileUpload";
 import { Card } from "@/components/ui/card";
+import { StepProgress } from "@/components/StepProgress";
 
 type ProcessingState =
   | "idle"
@@ -79,6 +80,7 @@ function App() {
           <FileUpload onFileSelect={handleFileSelect} disabled={false} />
         </div>
       </Card>
+      <StepProgress currentStep={currentStep}/>
     </>
   );
 }
