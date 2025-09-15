@@ -16,19 +16,19 @@ export function StepProgress({ currentStep }: StepProgressProps) {
   const steps: Step[] = [
     {
       id: 1,
-      title: 'Upload concluído',
+      title: 'Upload de arquivo',
       icon: <Upload className="h-5 w-5" />,
       status: currentStep > 1 ? 'completed' : currentStep === 1 ? 'current' : 'pending'
     },
     {
       id: 2,
-      title: 'Transcrição feita',
+      title: 'Realização de Transcrição',
       icon: <FileText className="h-5 w-5" />,
       status: currentStep > 2 ? 'completed' : currentStep === 2 ? 'current' : 'pending'
     },
     {
       id: 3,
-      title: 'Preparado para o Prompt',
+      title: 'Preparado para consultas!',
       icon: <MessageSquare className="h-5 w-5" />,
       status: currentStep > 3 ? 'completed' : currentStep === 3 ? 'current' : 'pending'
     }

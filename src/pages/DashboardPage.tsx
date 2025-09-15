@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/FileUpload";
 import { Card } from "@/components/ui/card";
@@ -6,6 +6,9 @@ import { StepProgress } from "@/components/StepProgress";
 import { MessageSquare, Upload } from "lucide-react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
+import { useApi } from "@/hooks/useApi";
+import { uploadService, type UploadResponse } from "@/services/upload";
+import { useTranscriptionSocket } from "@/hooks/useTranscriptionSocket";
 
 type ProcessingState =
   | "idle"
@@ -15,11 +18,22 @@ type ProcessingState =
   | "ready";
 
 export function DashboardPage() {
-  const { user, logout } = useAuth();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [processingState, setProcessingState] =
     useState<ProcessingState>("idle");
   const [currentStep, setCurrentStep] = useState(0);
+
+  const { user, logout } = useAuth();
+  const { execute: executeUpload } = useApi<UploadResponse, File>();
+
+  const handleChatReady = useCallback(() => {
+    setCurrentStep(3);
+    setProcessingState("ready");
+  }, []);
+  const { connect, disconnect } = useTranscriptionSocket({
+    userId: user?.id,
+    onUpdate: handleChatReady,
+  });
 
   const resetProcess = () => {
     setSelectedFile(null);
@@ -27,46 +41,28 @@ export function DashboardPage() {
     setCurrentStep(0);
   };
 
-  //TODO: ABAIXO, simulação da transcrição. Implementar API/websockets de acordo!!!!!
-
-  const handleFileSelect = (file: File) => {
-    //TODO: fake file handling (trocar para imagem, ver possibilidade de PDF)
+  const handleFileSelect = async (file: File) => {
     setSelectedFile(file);
     setProcessingState("uploading");
     setCurrentStep(1);
+
+    connect();
+    const uploaded = await executeUpload(
+      (file) =>
+        uploadService.uploadFile(file, (progress) => {
+          console.log(`Upload: ${progress.percentage}%`);
+        }),
+      file,
+      { successMessage: "Arquivo enviado com sucesso!" }
+    );
+
+    if (uploaded) {
+      setProcessingState("transcribing");
+      setCurrentStep(2);
+    } else {
+      disconnect();
+    }
   };
-
-  useEffect(() => {
-    if (processingState === "uploading") {
-      // fake upload
-      const timer = setTimeout(() => {
-        setProcessingState("transcribing");
-        setCurrentStep(2);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [processingState]);
-
-  useEffect(() => {
-    if (processingState === "transcribing") {
-      // fake transcription
-      const timer = setTimeout(() => {
-        setProcessingState("preparing");
-        setCurrentStep(3);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [processingState]);
-
-  useEffect(() => {
-    if (processingState === "preparing") {
-      // fake preparação final (faz sentido?)
-      const timer = setTimeout(() => {
-        setProcessingState("ready");
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [processingState]);
 
   if (!user) {
     return null;
