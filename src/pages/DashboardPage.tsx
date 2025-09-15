@@ -5,8 +5,7 @@ import { Card } from "@/components/ui/card";
 import { StepProgress } from "@/components/StepProgress";
 import { MessageSquare, Upload } from "lucide-react";
 import { DashboardHeader } from "@/components/DashboardHeader";
-
-const userMock = { name: "fernando", email: "fcbgomes@gmail.com" };
+import { useAuth } from "@/contexts/AuthContext";
 
 type ProcessingState =
   | "idle"
@@ -16,6 +15,7 @@ type ProcessingState =
   | "ready";
 
 export function DashboardPage() {
+  const { user, logout } = useAuth();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [processingState, setProcessingState] =
     useState<ProcessingState>("idle");
@@ -68,9 +68,13 @@ export function DashboardPage() {
     }
   }, [processingState]);
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-background w-full">
-      <DashboardHeader user={userMock} onLogout={() => {}} />
+      <DashboardHeader user={user} onLogout={logout} />
       <div className="max-w-4xl mx-auto space-y-8 p-4">
         <div className="text-center space-y-2">
           <h1 className="text-2xl sm:text-3xl">Dashboard</h1>
