@@ -15,7 +15,7 @@ type ProcessingState =
   | "preparing"
   | "ready";
 
-export function Dashboard() {
+export function DashboardPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [processingState, setProcessingState] =
     useState<ProcessingState>("idle");
@@ -182,5 +182,3 @@ export function Dashboard() {
     </div>
   );
 }
-
-export default Dashboard;
