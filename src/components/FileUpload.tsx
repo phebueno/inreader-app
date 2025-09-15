@@ -97,7 +97,7 @@ export function FileUpload({ onFileSelect, disabled }: FileUploadProps) {
               </p>
             </div>
             <div className="text-xs text-muted-foreground">
-              Suporte para arquivos de áudio, vídeo e documentos
+              Suporte para arquivos de imagem apenas
             </div>
           </div>
         )}
@@ -107,7 +107,7 @@ export function FileUpload({ onFileSelect, disabled }: FileUploadProps) {
           onChange={handleFileInput}
           disabled={disabled}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-          accept="audio/*,video/*,.pdf,.doc,.docx,.txt"
+          accept="image/*"
         />
       </div>
     </Card>

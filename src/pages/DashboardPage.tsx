@@ -145,8 +145,7 @@ export function DashboardPage() {
                   <div>
                     <h3 className="font-medium">1. Upload</h3>
                     <p className="text-sm text-muted-foreground">
-                      Arraste ou selecione um arquivo de áudio, vídeo ou
-                      documento
+                      Arraste ou selecione um arquivo de imagem
                     </p>
                   </div>
                 </div>
