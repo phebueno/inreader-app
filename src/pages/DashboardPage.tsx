@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useApi } from "@/hooks/useApi";
 import { uploadService, type UploadResponse } from "@/services/upload";
 import { useTranscriptionSocket } from "@/hooks/useTranscriptionSocket";
+import { ChatInterface } from "@/components/ChatInterface";
 
 type ProcessingState =
   | "idle"
@@ -25,6 +26,7 @@ export function DashboardPage() {
 
   const { user, logout } = useAuth();
   const { execute: executeUpload } = useApi<UploadResponse, File>();
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
 
   const handleChatReady = useCallback(() => {
     setCurrentStep(3);
@@ -62,6 +64,10 @@ export function DashboardPage() {
     } else {
       disconnect();
     }
+  };
+
+  const openChat = () => {
+    setIsChatOpen(true);
   };
 
   if (!user) {
@@ -122,7 +128,7 @@ export function DashboardPage() {
                 <div className="text-center space-y-4">
                   <p className="text-green-600">Processamento concluído!</p>
                   <Button
-                    onClick={() => {}}
+                    onClick={openChat}
                     className="flex items-center space-x-2"
                   >
                     <MessageSquare className="h-4 w-4" />
@@ -177,6 +183,10 @@ export function DashboardPage() {
             </div>
           </Card>
         )}
+        <ChatInterface
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+        />
       </div>
     </div>
   );
