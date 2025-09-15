@@ -5,10 +5,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
-// RegisterForm.tsx
 export function RegisterForm() {
-  const { login } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
@@ -20,20 +20,31 @@ export function RegisterForm() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
-      alert("As senhas não coincidem");
+      toast.error("As senhas não coincidem");
+      return;
+    }
+
+    if (form.password.length < 6) {
+      toast.error("A senha deve ter pelo menos 6 caracteres");
       return;
     }
 
     setIsLoading(true);
-    setTimeout(() => {
-      login({ email: form.email, name: form.name });
+
+    try {
+      const success = await register(form);
+      if (success) {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Erro no registro:", error);
+    } finally {
       setIsLoading(false);
-      navigate("/dashboard");
-    }, 1500);
+    }
   };
 
   return (

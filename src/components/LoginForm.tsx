@@ -13,16 +13,20 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    //TODO: IMPLEMENTAR CHAMADA REAL DE LOGIN
-    setTimeout(() => {
-      login({ email: form.email, name: form.email.split("@")[0] });
+    try {
+      const success = await login(form);
+      if (success) {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Erro no login:', error);
+    } finally {
       setIsLoading(false);
-      navigate("/dashboard");
-    }, 1500);
+    }
   };
 
   return (
