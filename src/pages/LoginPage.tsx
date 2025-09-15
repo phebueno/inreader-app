@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { RegisterForm } from "@/components/RegisterForm";
 import { LoginForm } from "@/components/LoginForm";
 import { FileText } from "lucide-react";
+import { toast } from "sonner"
 
 export function LoginPage() {
   const { isAuthenticated } = useAuth();
