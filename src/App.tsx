@@ -1,8 +1,8 @@
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { LoginPage } from "@/pages/Login";
-import { DashboardPage } from "@/pages/Dashboard";
+import { LoginPage } from "@/pages/LoginPage";
+import { DashboardPage } from "@/pages/DashboardPage";
 
 function App() {
   return (
