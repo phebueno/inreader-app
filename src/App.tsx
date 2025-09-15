@@ -6,7 +6,7 @@ import { StepProgress } from "@/components/StepProgress";
 import { MessageSquare, Upload } from "lucide-react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 
-const userMock = {name: 'fernando', email: 'fcbgomes@gmail.com'}
+const userMock = { name: "fernando", email: "fcbgomes@gmail.com" };
 
 type ProcessingState =
   | "idle"
@@ -70,7 +70,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background w-full">
-      <DashboardHeader user={userMock} onLogout={()=>{}}/>
+      <DashboardHeader user={userMock} onLogout={() => {}} />
       <div className="max-w-4xl mx-auto space-y-8 p-4">
         <div className="text-center space-y-2">
           <h1 className="text-2xl sm:text-3xl">Dashboard</h1>
@@ -133,50 +133,51 @@ function App() {
             </div>
           </Card>
         )}
-        {processingState === 'idle' && (
-            <Card className="p-6">
-              <div className="space-y-4">
-                <h2 className="text-xl">Como usar</h2>
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Upload className="h-4 w-4 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">1. Upload</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Arraste ou selecione um arquivo de áudio, vídeo ou documento
-                      </p>
-                    </div>
+        {processingState === "idle" && (
+          <Card className="p-6">
+            <div className="space-y-4">
+              <h2 className="text-xl">Como usar</h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="flex items-start space-x-3">
+                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Upload className="h-4 w-4 text-primary" />
                   </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-sm font-medium text-primary">2</span>
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Processamento</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Aguarde enquanto transcrevemos e preparamos o conteúdo
-                      </p>
-                    </div>
+                  <div>
+                    <h3 className="font-medium">1. Upload</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Arraste ou selecione um arquivo de áudio, vídeo ou
+                      documento
+                    </p>
                   </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <MessageSquare className="h-4 w-4 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">3. Chat</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Converse com a IA sobre o conteúdo do seu arquivo
-                      </p>
-                    </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-medium text-primary">2</span>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Processamento</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Aguarde enquanto transcrevemos e preparamos o conteúdo
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <MessageSquare className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">3. Chat</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Converse com a IA sobre o conteúdo do seu arquivo
+                    </p>
                   </div>
                 </div>
               </div>
-            </Card>
-          )}
+            </div>
+          </Card>
+        )}
       </div>
     </div>
   );

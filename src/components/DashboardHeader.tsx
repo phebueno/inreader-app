@@ -1,4 +1,4 @@
-import { FileText, LogOut, User } from 'lucide-react';
+import { FileText, LogOut, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,9 +6,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface User {
   email: string;
@@ -23,9 +23,9 @@ interface DashboardHeaderProps {
 export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
   const getUserInitials = (name: string) => {
     return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -37,11 +37,10 @@ export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
           <FileText className="h-6 w-6 text-primary" />
           <h1 className="text-xl">InReader</h1>
         </div>
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               className="relative h-10 w-10 rounded-full p-0 hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
             >
               <Avatar className="h-10 w-10">
@@ -51,9 +50,9 @@ export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent 
-            className="w-56 bg-popover border border-border shadow-lg" 
-            align="end" 
+          <DropdownMenuContent
+            className="w-56 bg-popover border border-border shadow-lg"
+            align="end"
             sideOffset={5}
           >
             <DropdownMenuLabel className="font-normal p-3">
@@ -70,8 +69,8 @@ export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
               <span>Perfil</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              className="cursor-pointer p-3 text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive" 
+            <DropdownMenuItem
+              className="cursor-pointer p-3 text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive"
               onClick={onLogout}
             >
               <LogOut className="mr-2 h-4 w-4" />
