@@ -4,6 +4,9 @@ import { FileUpload } from "@/components/FileUpload";
 import { Card } from "@/components/ui/card";
 import { StepProgress } from "@/components/StepProgress";
 import { MessageSquare, Upload } from "lucide-react";
+import { DashboardHeader } from "@/components/DashboardHeader";
+
+const userMock = {name: 'fernando', email: 'fcbgomes@gmail.com'}
 
 type ProcessingState =
   | "idle"
@@ -66,10 +69,11 @@ function App() {
   }, [processingState]);
 
   return (
-    <div className="min-h-screen bg-background p-4 w-full">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen bg-background w-full">
+      <DashboardHeader user={userMock} onLogout={()=>{}}/>
+      <div className="max-w-4xl mx-auto space-y-8 p-4">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl sm:text-3xl">InReader</h1>
+          <h1 className="text-2xl sm:text-3xl">Dashboard</h1>
           <p className="text-muted-foreground">
             Faça upload de arquivos para transcrição e análise por IA
           </p>
