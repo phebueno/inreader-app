@@ -95,7 +95,12 @@ export function DashboardPage() {
               )}
             </div>
 
-            <FileUpload onFileSelect={handleFileSelect} disabled={false} />
+            <FileUpload
+              selectedFile={selectedFile}
+              onFileSelect={handleFileSelect}
+              onRemove={resetProcess}
+              disabled={processingState !== "idle"}
+            />
           </div>
         </Card>
         {currentStep > 0 && (

@@ -4,13 +4,14 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 
 interface FileUploadProps {
-  onFileSelect: (file: File) => void;
+  selectedFile: File | null;
   disabled?: boolean;
+  onFileSelect: (file: File) => void;
+  onRemove?: () => void;
 }
 
-export function FileUpload({ onFileSelect, disabled }: FileUploadProps) {
+export function FileUpload({ onFileSelect, disabled, selectedFile, onRemove }: FileUploadProps) {
   const [isDragOver, setIsDragOver] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -33,7 +34,6 @@ export function FileUpload({ onFileSelect, disabled }: FileUploadProps) {
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
       const file = files[0];
-      setSelectedFile(file);
       onFileSelect(file);
     }
   }, [onFileSelect, disabled]);
@@ -44,14 +44,9 @@ export function FileUpload({ onFileSelect, disabled }: FileUploadProps) {
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
-      setSelectedFile(file);
       onFileSelect(file);
     }
   }, [onFileSelect, disabled]);
-
-  const removeFile = useCallback(() => {
-    setSelectedFile(null);
-  }, []);
 
   return (
     <Card className={`relative p-8 transition-all duration-200 ${
@@ -79,7 +74,7 @@ export function FileUpload({ onFileSelect, disabled }: FileUploadProps) {
                 <Button
                   variant="default"
                   size="sm"
-                  onClick={removeFile}
+                  onClick={onRemove}
                   className="h-8 w-8 p-0"
                 >
                   <X className="h-4 w-4" />
