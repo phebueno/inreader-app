@@ -48,7 +48,10 @@ export function TranscriptionViewer({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `transcricao-${fileName || "arquivo"}.txt`;
+    const baseFileName = fileName
+      ? fileName.replace(/\.[^/.]+$/, "")
+      : "arquivo";
+    a.download = `transcricao-${baseFileName}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
