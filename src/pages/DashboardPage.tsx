@@ -3,16 +3,18 @@ import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/FileUpload";
 import { Card } from "@/components/ui/card";
 import { StepProgress } from "@/components/StepProgress";
-import { MessageSquare, Upload } from "lucide-react";
+import { FileText, MessageSquare, Upload } from "lucide-react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { useApi } from "@/hooks/useApi";
 import { uploadService, type UploadResponse } from "@/services/upload";
 import {
   useTranscriptionSocket,
+  type Transcription,
   type TranscriptionUpdatePayload,
 } from "@/hooks/useTranscriptionSocket";
 import { ChatInterface } from "@/components/ChatInterface";
+import { TranscriptionViewer } from "@/components/TranscriptionViewer";
 
 type ProcessingState =
   | "idle"
@@ -30,18 +32,21 @@ export function DashboardPage() {
   const { user, logout } = useAuth();
   const { execute: executeUpload } = useApi<UploadResponse, File>();
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
-  const [transcriptionId, setTranscriptionId] = useState<string | null>(null);
+  const [isTranscriptionOpen, setIsTranscriptionOpen] =
+    useState<boolean>(false);
+
+  const [transcription, setTranscription] = useState<Transcription | null>(null);
 
   const resetProcess = () => {
     setSelectedFile(null);
     setProcessingState("idle");
     setCurrentStep(0);
-    setTranscriptionId(null);
+    setTranscription(null);
   };
 
   const handleChatReady = useCallback((data: TranscriptionUpdatePayload) => {
     if (data.status === "DONE") {
-      setTranscriptionId(data.transcription.id);
+      setTranscription(data.transcription);
       setCurrentStep(3);
       setProcessingState("ready");
     } else {
@@ -75,10 +80,6 @@ export function DashboardPage() {
     } else {
       disconnect();
     }
-  };
-
-  const openChat = () => {
-    setIsChatOpen(true);
   };
 
   if (!user) {
@@ -143,13 +144,23 @@ export function DashboardPage() {
               {processingState === "ready" && (
                 <div className="text-center space-y-4">
                   <p className="text-green-600">Processamento concluído!</p>
-                  <Button
-                    onClick={openChat}
-                    className="flex items-center space-x-2"
-                  >
-                    <MessageSquare className="h-4 w-4" />
-                    <span>Iniciar Chat com IA</span>
-                  </Button>
+                  <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
+                    <Button
+                      onClick={() => setIsTranscriptionOpen(true)}
+                      variant="outline"
+                      className="flex items-center space-x-2 w-full sm:w-auto"
+                    >
+                      <FileText className="h-4 w-4" />
+                      <span>Ver Transcrição</span>
+                    </Button>
+                    <Button
+                      onClick={() => setIsChatOpen(true)}
+                      className="flex items-center space-x-2"
+                    >
+                      <MessageSquare className="h-4 w-4" />
+                      <span>Iniciar Chat com IA</span>
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -199,13 +210,22 @@ export function DashboardPage() {
             </div>
           </Card>
         )}
-        {transcriptionId && (
-          <ChatInterface
-            isOpen={isChatOpen}
-            onClose={() => setIsChatOpen(false)}
-            user={user}
-            transcriptionId={transcriptionId}
-          />
+        {transcription && (
+          <>
+            <ChatInterface
+              isOpen={isChatOpen}
+              onClose={() => setIsChatOpen(false)}
+              user={user}
+              transcriptionId={transcription.id}
+            />
+
+            <TranscriptionViewer
+              isOpen={isTranscriptionOpen}
+              onClose={() => setIsTranscriptionOpen(false)}
+              fileName={selectedFile?.name}
+              transcriptionText={transcription.text}
+            />
+          </>
         )}
       </div>
     </div>

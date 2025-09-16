@@ -3,15 +3,16 @@ import { useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { toast } from "sonner";
 
+export interface Transcription {
+  id: string;
+  documentId: string;
+  text: string;
+  createdAt: string;
+}
 export interface TranscriptionSuccessPayload {
   documentId: string;
   status: "DONE";
-  transcription: {
-    id: string;
-    documentId: string;
-    text: string;
-    createdAt: string;
-  };
+  transcription: Transcription;
 }
 
 export interface TranscriptionFailedPayload {
@@ -59,7 +60,9 @@ export function useTranscriptionSocket({
             onUpdate(payload);
           } else if (payload.status === "FAILED") {
             console.error("Transcrição falhou:", payload.error);
-            toast.error("Transcrição falhou! Escolha outro arquivo, ou tente novamente em breve.")
+            toast.error(
+              "Transcrição falhou! Escolha outro arquivo, ou tente novamente em breve."
+            );
           }
         }
       );
