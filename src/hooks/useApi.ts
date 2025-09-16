@@ -55,8 +55,6 @@ export function useApi<TData = any, TParams = any>() {
 
         setState({ data: null, loading: false, error: errorMsg });
 
-        console.log(errorMsg)
-
         if (showErrorToast) {
           console.log('here???')
           toast.error(errorMsg);

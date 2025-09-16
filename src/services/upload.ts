@@ -72,4 +72,31 @@ export const uploadService = {
 
     return response.data;
   },
+
+  async downloadFile(documentId: string, full: boolean = false): Promise<void> {
+    const url = full 
+      ? `/documents/${documentId}/download/full` 
+      : `/documents/${documentId}/download`;
+
+    const response = await api.get(url, { responseType: "blob" });
+
+    let fileName = response.headers["content-disposition"]
+      ?.split("filename=")[1]
+      ?.replace(/"/g, "");
+
+    if (!fileName) {
+      const mimeType = response.headers["content-type"];
+      const extension = mimeType ? mimeType.split("/")[1] : "bin";
+      fileName = `document-${documentId}.${extension}`;
+    }
+
+    const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(blobUrl);
+  },
 };

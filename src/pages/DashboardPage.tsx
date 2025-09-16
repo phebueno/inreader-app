@@ -30,7 +30,10 @@ export function DashboardPage() {
   const [currentStep, setCurrentStep] = useState(0);
 
   const { user, logout } = useAuth();
+
   const { execute: executeUpload } = useApi<UploadResponse, File>();
+  const { execute: executeDownload } = useApi<void, string>();
+
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [isTranscriptionOpen, setIsTranscriptionOpen] =
     useState<boolean>(false);
@@ -123,6 +126,22 @@ export function DashboardPage() {
             processingState={processingState}
             openChat={() => setIsChatOpen(true)}
             openTranscription={() => setIsTranscriptionOpen(true)}
+            downloadFile={() =>
+              transcription &&
+              executeDownload(
+                (id) => uploadService.downloadFile(id),
+                transcription.documentId,
+                { successMessage: "Download iniciado!", showSuccessToast: true }
+              )
+            }
+            downloadFileFull={() =>
+              transcription &&
+              executeDownload(
+                (id) => uploadService.downloadFile(id, true),
+                transcription.documentId,
+                { successMessage: "Download iniciado!", showSuccessToast: true }
+              )
+            }
           />
         )}
         {processingState === "idle" && <ProcessingGuide />}
