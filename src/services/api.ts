@@ -29,9 +29,7 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (error.response) {
       const { status, data } = error.response;
@@ -39,10 +37,11 @@ api.interceptors.response.use(
       switch (status) {
         case 401:
           if (data?.message === "Invalid credentials") {
-            toast.error("Email ou senha incorretas");
+            error.normalizedMessage = "Email ou senha incorretos";
           } else {
-            toast.error("Sessão expirada. Faça login novamente.");
+            error.normalizedMessage = "Sessão expirada. Faça login novamente.";
           }
+
           if (onUnauthorized) {
             onUnauthorized();
           } else {
@@ -50,32 +49,43 @@ api.interceptors.response.use(
             localStorage.removeItem("user_data");
           }
           break;
+
         case 403:
-          toast.error("Acesso negado. Você não tem permissão para esta ação.");
+          error.normalizedMessage =
+            "Acesso negado. Você não tem permissão para esta ação.";
           break;
+
         case 404:
-          toast.error("Recurso não encontrado.");
+          error.normalizedMessage = "Recurso não encontrado.";
           break;
+
         case 422:
           if (data.errors && Array.isArray(data.errors)) {
-            data.errors.forEach((err: string) => toast.error(err));
+            error.normalizedMessage = data.errors.join("\n");
           } else {
-            toast.error(data.message || "Dados inválidos.");
+            error.normalizedMessage = data.message || "Dados inválidos.";
           }
           break;
+
         case 429:
-          toast.error("Muitas tentativas. Tente novamente em alguns minutos.");
+          error.normalizedMessage =
+            "Muitas tentativas. Tente novamente em alguns minutos.";
           break;
+
         case 500:
-          toast.error("Erro interno do servidor. Tente novamente mais tarde.");
+          error.normalizedMessage =
+            "Erro interno do servidor. Tente novamente mais tarde.";
           break;
+
         default:
-          toast.error(data.message || "Ocorreu um erro inesperado.");
+          error.normalizedMessage =
+            data.message || "Ocorreu um erro inesperado.";
       }
     } else if (error.request) {
-      toast.error("Erro de conexão. Verifique sua internet e tente novamente.");
+      error.normalizedMessage =
+        "Erro de conexão. Verifique sua internet e tente novamente.";
     } else {
-      toast.error("Erro interno. Tente novamente.");
+      error.normalizedMessage = "Erro interno. Tente novamente.";
     }
 
     return Promise.reject(error);

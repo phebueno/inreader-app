@@ -74,6 +74,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return true;
     } catch (error: any) {
       console.error("Erro no login:", error);
+      toast.error(
+        error.normalizedMessage ||
+          error.response.data.message ||
+          error.message ||
+          "Erro interno de servidor!"
+      );
       setUser(null);
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user_data");
@@ -88,6 +94,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return true;
     } catch (error: any) {
       console.error("Erro no registro:", error);
+      toast.error(
+        error.normalizedMessage ||
+          error.response.data.message ||
+          error.message ||
+          "Erro interno de servidor!"
+      );
+
       return false;
     }
   };

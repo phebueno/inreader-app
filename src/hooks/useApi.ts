@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { toast } from 'sonner';
+import { useState, useCallback } from "react";
+import { toast } from "sonner";
 
 interface UseApiState<T> {
   data: T | null;
@@ -38,23 +38,30 @@ export function useApi<TData = any, TParams = any>() {
 
       try {
         const result = await apiCall(params);
-        
+
         setState({ data: result, loading: false, error: null });
-        
+
         if (showSuccessToast && successMessage) {
           toast.success(successMessage);
         }
-        
+
         return result;
       } catch (error: any) {
-        const errorMsg = errorMessage || error.message || 'Ocorreu um erro inesperado';
-        
+        const errorMsg =
+          errorMessage ||
+          error.normalizedMessage ||
+          error.message ||
+          "Ocorreu um erro inesperado";
+
         setState({ data: null, loading: false, error: errorMsg });
-        
+
+        console.log(errorMsg)
+
         if (showErrorToast) {
+          console.log('here???')
           toast.error(errorMsg);
         }
-        
+
         return null;
       }
     },
