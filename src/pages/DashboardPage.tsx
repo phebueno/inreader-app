@@ -186,6 +186,7 @@ export function DashboardPage() {
         <ChatInterface
           isOpen={isChatOpen}
           onClose={() => setIsChatOpen(false)}
+          transcriptionId="placeholder"
         />
       </div>
     </div>

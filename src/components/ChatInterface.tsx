@@ -1,14 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, X } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Input } from '@/components/ui/input';
+import React, { useState, useRef, useEffect } from "react";
+import { Send, Bot, User, X } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { useApi } from "@/hooks/useApi";
+import {
+  aiCompletionService,
+  type AiCompletionResponse,
+} from "@/services/aiCompletion";
 
 interface Message {
   id: string;
   content: string;
-  sender: 'user' | 'ai';
+  sender: "user" | "ai";
   timestamp: Date;
 }
 
@@ -16,23 +21,36 @@ interface ChatInterfaceProps {
   isOpen: boolean;
   onClose: () => void;
   fileName?: string;
+  transcriptionId: string;
 }
 
-export function ChatInterface({ isOpen, onClose, fileName }: ChatInterfaceProps) {
+export function ChatInterface({
+  isOpen,
+  onClose,
+  fileName,
+  transcriptionId,
+}: ChatInterfaceProps) {
+  const { execute: executePrompt } = useApi<
+    AiCompletionResponse,
+    { prompt: string }
+  >();
+
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: '1',
-      content: `Olá! Acabei de processar o arquivo "${fileName || 'seu arquivo'}". Agora você pode fazer perguntas sobre o conteúdo, solicitar resumos, análises ou qualquer outra coisa relacionada ao material. Como posso ajudá-lo?`,
-      sender: 'ai',
-      timestamp: new Date()
-    }
+      id: "1",
+      content: `Olá! Acabei de processar o arquivo "${
+        fileName || "seu arquivo"
+      }". Agora você pode fazer perguntas sobre o conteúdo, solicitar resumos, análises ou qualquer outra coisa relacionada ao material. Como posso ajudá-lo?`,
+      sender: "ai",
+      timestamp: new Date(),
+    },
   ]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -45,38 +63,37 @@ export function ChatInterface({ isOpen, onClose, fileName }: ChatInterfaceProps)
     const userMessage: Message = {
       id: Date.now().toString(),
       content: inputValue,
-      sender: 'user',
-      timestamp: new Date()
+      sender: "user",
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
     setIsTyping(true);
 
-    // Simular resposta da IA
-    setTimeout(() => {
-      const aiResponses = [
-        'Baseado no conteúdo do arquivo, posso ajudá-lo com essa questão. O que você gostaria de saber especificamente?',
-        'Analisando o material fornecido, encontrei algumas informações relevantes sobre sua pergunta...',
-        'Excelente pergunta! Com base na transcrição, posso explicar isso em detalhes.',
-        'Deixe-me revisar o conteúdo e fornecer uma resposta abrangente para você.',
-        'Interessante questão! O arquivo contém várias informações que podem esclarecer isso.'
-      ];
+    const aiCompletion = await executePrompt(
+      ({ prompt }) =>
+        aiCompletionService.createAiCompletion(transcriptionId, prompt),
+      { prompt: inputValue },
+      { errorMessage: "Erro na IA! Tente novamente daqui a alguns minutos." }
+    );
 
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: aiResponses[Math.floor(Math.random() * aiResponses.length)],
-        sender: 'ai',
-        timestamp: new Date()
-      };
+    const missingResponse =
+      "Desculpe, não pude processar sua requisição, tente novamente em alguns minutos.";
 
-      setMessages(prev => [...prev, aiMessage]);
-      setIsTyping(false);
-    }, 1500);
+    const aiMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      content: aiCompletion?.response || missingResponse,
+      sender: "ai",
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, aiMessage]);
+    setIsTyping(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -94,11 +111,16 @@ export function ChatInterface({ isOpen, onClose, fileName }: ChatInterfaceProps)
             <div className="min-w-0">
               <h3 className="text-sm sm:text-base font-medium">Chat com IA</h3>
               <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                Conversando sobre: {fileName || 'arquivo processado'}
+                Conversando sobre: {fileName || "arquivo processado"}
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose} className="shrink-0">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="shrink-0"
+          >
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -110,21 +132,25 @@ export function ChatInterface({ isOpen, onClose, fileName }: ChatInterfaceProps)
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${
+                    message.sender === "user" ? "justify-end" : "justify-start"
+                  }`}
                 >
                   <div
                     className={`flex items-start space-x-2 max-w-[85%] sm:max-w-[80%] ${
-                      message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''
+                      message.sender === "user"
+                        ? "flex-row-reverse space-x-reverse"
+                        : ""
                     }`}
                   >
                     <div
                       className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 ${
-                        message.sender === 'user' 
-                          ? 'bg-primary text-primary-foreground' 
-                          : 'bg-muted text-muted-foreground'
+                        message.sender === "user"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground"
                       }`}
                     >
-                      {message.sender === 'user' ? (
+                      {message.sender === "user" ? (
                         <User className="h-3 w-3 sm:h-4 sm:w-4" />
                       ) : (
                         <Bot className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -132,12 +158,14 @@ export function ChatInterface({ isOpen, onClose, fileName }: ChatInterfaceProps)
                     </div>
                     <div
                       className={`rounded-lg p-2.5 sm:p-3 ${
-                        message.sender === 'user'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted'
+                        message.sender === "user"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted"
                       }`}
                     >
-                      <p className="text-sm sm:text-base break-words">{message.content}</p>
+                      <p className="text-sm sm:text-base break-words">
+                        {message.content}
+                      </p>
                       <p className="text-xs opacity-70 mt-1">
                         {message.timestamp.toLocaleTimeString()}
                       </p>
@@ -145,7 +173,7 @@ export function ChatInterface({ isOpen, onClose, fileName }: ChatInterfaceProps)
                   </div>
                 </div>
               ))}
-              
+
               {isTyping && (
                 <div className="flex justify-start">
                   <div className="flex items-start space-x-2 max-w-[85%] sm:max-w-[80%]">
@@ -155,8 +183,14 @@ export function ChatInterface({ isOpen, onClose, fileName }: ChatInterfaceProps)
                     <div className="bg-muted rounded-lg p-2.5 sm:p-3">
                       <div className="flex space-x-1">
                         <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-muted-foreground rounded-full animate-bounce"></div>
-                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-muted-foreground rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-muted-foreground rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                        <div
+                          className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-muted-foreground rounded-full animate-bounce"
+                          style={{ animationDelay: "0.1s" }}
+                        ></div>
+                        <div
+                          className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-muted-foreground rounded-full animate-bounce"
+                          style={{ animationDelay: "0.2s" }}
+                        ></div>
                       </div>
                     </div>
                   </div>
@@ -177,8 +211,8 @@ export function ChatInterface({ isOpen, onClose, fileName }: ChatInterfaceProps)
               disabled={isTyping}
               className="text-sm sm:text-base"
             />
-            <Button 
-              onClick={handleSendMessage} 
+            <Button
+              onClick={handleSendMessage}
               disabled={!inputValue.trim() || isTyping}
               size="sm"
               className="shrink-0"
