@@ -8,7 +8,10 @@ import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { useApi } from "@/hooks/useApi";
 import { uploadService, type UploadResponse } from "@/services/upload";
-import { useTranscriptionSocket } from "@/hooks/useTranscriptionSocket";
+import {
+  useTranscriptionSocket,
+  type TranscriptionUpdatePayload,
+} from "@/hooks/useTranscriptionSocket";
 import { ChatInterface } from "@/components/ChatInterface";
 
 type ProcessingState =
@@ -27,21 +30,29 @@ export function DashboardPage() {
   const { user, logout } = useAuth();
   const { execute: executeUpload } = useApi<UploadResponse, File>();
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
-
-  const handleChatReady = useCallback(() => {
-    setCurrentStep(3);
-    setProcessingState("ready");
-  }, []);
-  const { connect, disconnect } = useTranscriptionSocket({
-    userId: user?.id,
-    onUpdate: handleChatReady,
-  });
+  const [transcriptionId, setTranscriptionId] = useState<string | null>(null);
 
   const resetProcess = () => {
     setSelectedFile(null);
     setProcessingState("idle");
     setCurrentStep(0);
+    setTranscriptionId(null);
   };
+
+  const handleChatReady = useCallback((data: TranscriptionUpdatePayload) => {
+    if (data.status === "DONE") {
+      setTranscriptionId(data.transcription.id);
+      setCurrentStep(3);
+      setProcessingState("ready");
+    } else {
+      console.log("Erro de transcrição:", data.error);
+      resetProcess();
+    }
+  }, []);
+  const { connect, disconnect } = useTranscriptionSocket({
+    userId: user?.id,
+    onUpdate: handleChatReady,
+  });
 
   const handleFileSelect = async (file: File) => {
     setSelectedFile(file);
@@ -188,11 +199,14 @@ export function DashboardPage() {
             </div>
           </Card>
         )}
-        <ChatInterface
-          isOpen={isChatOpen}
-          onClose={() => setIsChatOpen(false)}
-          transcriptionId="placeholder"
-        />
+        {transcriptionId && (
+          <ChatInterface
+            isOpen={isChatOpen}
+            onClose={() => setIsChatOpen(false)}
+            user={user}
+            transcriptionId={transcriptionId}
+          />
+        )}
       </div>
     </div>
   );

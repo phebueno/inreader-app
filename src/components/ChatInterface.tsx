@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, X } from "lucide-react";
+import { Send, Bot, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -9,6 +9,8 @@ import {
   aiCompletionService,
   type AiCompletionResponse,
 } from "@/services/aiCompletion";
+import type { User as UserType } from "@/services/auth";
+import { getUserInitials } from "@/lib/utils";
 
 interface Message {
   id: string;
@@ -21,13 +23,15 @@ interface ChatInterfaceProps {
   isOpen: boolean;
   onClose: () => void;
   fileName?: string;
-  transcriptionId: string;
+  user: UserType;
+  transcriptionId: string | null;
 }
 
 export function ChatInterface({
   isOpen,
   onClose,
   fileName,
+  user,
   transcriptionId,
 }: ChatInterfaceProps) {
   const { execute: executePrompt } = useApi<
@@ -56,6 +60,8 @@ export function ChatInterface({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  if (!isOpen || !transcriptionId) return null;
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -99,12 +105,9 @@ export function ChatInterface({
     }
   };
 
-  if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
       <Card className="w-full max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-4xl h-[90vh] sm:h-[85vh] md:h-[80vh] flex flex-col">
-        {/* Header - altura fixa */}
         <div className="flex items-center justify-between p-3 sm:p-4 border-b shrink-0">
           <div className="flex items-center space-x-2 min-w-0">
             <Bot className="h-5 w-5 sm:h-6 sm:w-6 text-primary shrink-0" />
@@ -125,7 +128,6 @@ export function ChatInterface({
           </Button>
         </div>
 
-        {/* Área de mensagens - expansível com scroll */}
         <div className="flex-1 min-h-0 relative">
           <ScrollArea className="h-full">
             <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
@@ -151,7 +153,7 @@ export function ChatInterface({
                       }`}
                     >
                       {message.sender === "user" ? (
-                        <User className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <>{getUserInitials(user.name)}</>
                       ) : (
                         <Bot className="h-3 w-3 sm:h-4 sm:w-4" />
                       )}

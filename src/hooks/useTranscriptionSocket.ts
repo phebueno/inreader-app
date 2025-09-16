@@ -1,11 +1,7 @@
 import { baseURL } from "@/config/env";
 import { useRef } from "react";
 import { io, Socket } from "socket.io-client";
-
-interface UseTranscriptionSocketProps {
-  userId?: string | null;
-  onUpdate: (data: any) => void;
-}
+import { toast } from "sonner";
 
 export interface TranscriptionSuccessPayload {
   documentId: string;
@@ -27,6 +23,11 @@ export interface TranscriptionFailedPayload {
 export type TranscriptionUpdatePayload =
   | TranscriptionSuccessPayload
   | TranscriptionFailedPayload;
+
+interface UseTranscriptionSocketProps {
+  userId?: string | null;
+  onUpdate: (data: TranscriptionUpdatePayload) => void;
+}
 
 export function useTranscriptionSocket({
   userId,
@@ -58,6 +59,7 @@ export function useTranscriptionSocket({
             onUpdate(payload);
           } else if (payload.status === "FAILED") {
             console.error("Transcrição falhou:", payload.error);
+            toast.error("Transcrição falhou! Escolha outro arquivo, ou tente novamente em breve.")
           }
         }
       );

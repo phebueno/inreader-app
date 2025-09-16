@@ -9,27 +9,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-
-interface User {
-  email: string;
-  name: string;
-}
+import { getUserInitials } from "@/lib/utils";
+import type { User as UserType } from "@/services/auth";
 
 interface DashboardHeaderProps {
-  user: User;
+  user: UserType;
   onLogout: () => void;
 }
 
 export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
-  const getUserInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
     <header className="border-b bg-card">
       <div className="max-w-4xl mx-auto flex items-center justify-between p-4">

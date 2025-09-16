@@ -1,5 +1,4 @@
 import axios from "axios";
-import { toast } from "sonner";
 import { baseURL } from "@/config/env";
 
 let onUnauthorized: (() => void) | null = null;
