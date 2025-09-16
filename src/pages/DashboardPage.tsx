@@ -2,8 +2,6 @@ import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/FileUpload";
 import { Card } from "@/components/ui/card";
-import { StepProgress } from "@/components/StepProgress";
-import { FileText, MessageSquare, Upload } from "lucide-react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { useApi } from "@/hooks/useApi";
@@ -15,8 +13,10 @@ import {
 } from "@/hooks/useTranscriptionSocket";
 import { ChatInterface } from "@/components/ChatInterface";
 import { TranscriptionViewer } from "@/components/TranscriptionViewer";
+import { ProcessingGuide } from "@/components/ProcessingGuide";
+import { ProcessingSteps } from "@/components/ProcessingSteps";
 
-type ProcessingState =
+export type ProcessingState =
   | "idle"
   | "uploading"
   | "transcribing"
@@ -35,7 +35,9 @@ export function DashboardPage() {
   const [isTranscriptionOpen, setIsTranscriptionOpen] =
     useState<boolean>(false);
 
-  const [transcription, setTranscription] = useState<Transcription | null>(null);
+  const [transcription, setTranscription] = useState<Transcription | null>(
+    null
+  );
 
   const resetProcess = () => {
     setSelectedFile(null);
@@ -116,100 +118,14 @@ export function DashboardPage() {
           </div>
         </Card>
         {currentStep > 0 && (
-          <Card className="p-6">
-            <div className="space-y-6">
-              <h2 className="text-xl">Progresso do Processamento</h2>
-              <StepProgress currentStep={currentStep} />
-
-              {processingState === "uploading" && (
-                <div className="text-center">
-                  <p className="text-primary">Fazendo upload do arquivo...</p>
-                </div>
-              )}
-
-              {processingState === "transcribing" && (
-                <div className="text-center">
-                  <p className="text-primary">Transcrevendo conteúdo...</p>
-                </div>
-              )}
-
-              {processingState === "preparing" && (
-                <div className="text-center">
-                  <p className="text-primary">
-                    Preparando para análise por IA...
-                  </p>
-                </div>
-              )}
-
-              {processingState === "ready" && (
-                <div className="text-center space-y-4">
-                  <p className="text-green-600">Processamento concluído!</p>
-                  <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-                    <Button
-                      onClick={() => setIsTranscriptionOpen(true)}
-                      variant="outline"
-                      className="flex items-center space-x-2 w-full sm:w-auto"
-                    >
-                      <FileText className="h-4 w-4" />
-                      <span>Ver Transcrição</span>
-                    </Button>
-                    <Button
-                      onClick={() => setIsChatOpen(true)}
-                      className="flex items-center space-x-2"
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                      <span>Iniciar Chat com IA</span>
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </Card>
+          <ProcessingSteps
+            currentStep={currentStep}
+            processingState={processingState}
+            openChat={() => setIsChatOpen(true)}
+            openTranscription={() => setIsTranscriptionOpen(true)}
+          />
         )}
-        {processingState === "idle" && (
-          <Card className="p-6">
-            <div className="space-y-4">
-              <h2 className="text-xl">Como usar</h2>
-              <div className="grid md:grid-cols-3 gap-4">
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Upload className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">1. Upload</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Arraste ou selecione um arquivo de imagem
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-medium text-primary">2</span>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Processamento</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Aguarde enquanto transcrevemos e preparamos o conteúdo
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <MessageSquare className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">3. Chat</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Converse com a IA sobre o conteúdo do seu arquivo
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
-        )}
+        {processingState === "idle" && <ProcessingGuide />}
         {transcription && (
           <>
             <ChatInterface
@@ -217,6 +133,7 @@ export function DashboardPage() {
               onClose={() => setIsChatOpen(false)}
               user={user}
               transcriptionId={transcription.id}
+              fileName={selectedFile?.name}
             />
 
             <TranscriptionViewer
