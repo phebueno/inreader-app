@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getUserInitials } from "@/lib/utils";
 import type { User as UserType } from "@/services/auth";
+import { toast } from "sonner";
 
 interface DashboardHeaderProps {
   user: UserType;
@@ -52,7 +53,10 @@ export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer p-3 hover:bg-accent focus:bg-accent">
+            <DropdownMenuItem
+              className="cursor-pointer p-3 hover:bg-accent focus:bg-accent"
+              onClick={() => toast.warning("Feature ainda não implementada!")}
+            >
               <User className="mr-2 h-4 w-4" />
               <span>Perfil</span>
             </DropdownMenuItem>

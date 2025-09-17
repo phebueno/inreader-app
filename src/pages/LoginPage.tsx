@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { RegisterForm } from "@/components/RegisterForm";
 import { LoginForm } from "@/components/LoginForm";
 import { FileText } from "lucide-react";
+import { toast } from "sonner";
 
 export function LoginPage() {
   const { isAuthenticated, loading } = useAuth();
@@ -46,7 +47,13 @@ export function LoginPage() {
             <TabsContent value="login" className="space-y-4">
               <LoginForm />
               <div className="text-center">
-                <Button variant="link" className="text-sm">
+                <Button
+                  variant="link"
+                  className="text-sm"
+                  onClick={() =>
+                    toast.warning("Feature ainda não implementada!")
+                  }
+                >
                   Esqueceu a senha?
                 </Button>
               </div>
