@@ -9,7 +9,6 @@ import {
   MessageSquare,
   SquareCheck,
   CircleStar,
-  CircleStarIcon,
 } from "lucide-react";
 
 interface ProcessingStepsProps {
