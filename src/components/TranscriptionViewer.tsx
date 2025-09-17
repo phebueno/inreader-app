@@ -40,6 +40,7 @@ export function TranscriptionViewer({
       toast.success("Transcrição copiada para a área de transferência!");
     } catch (error) {
       toast.error("Erro ao copiar texto");
+      console.log(error);
     }
   };
 

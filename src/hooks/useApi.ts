@@ -10,8 +10,10 @@ interface UseApiState<T> {
 interface UseApiOptions {
   successMessage?: string;
   errorMessage?: string;
+  loadingMessage?: string;
   showSuccessToast?: boolean;
   showErrorToast?: boolean;
+  showLoadingToast?: boolean;
 }
 
 export function useApi<TData = any, TParams = any>() {
@@ -30,18 +32,28 @@ export function useApi<TData = any, TParams = any>() {
       const {
         successMessage,
         errorMessage,
+        loadingMessage,
         showSuccessToast = false,
         showErrorToast = true,
+        showLoadingToast = true,
       } = options;
 
       setState({ data: null, loading: true, error: null });
 
+      let toastId: string | number | undefined;
+
       try {
+        if (showLoadingToast) {
+          toastId = toast.loading(loadingMessage || "Carregando...");
+        }
+
         const result = await apiCall(params);
 
         setState({ data: result, loading: false, error: null });
 
-        if (showSuccessToast && successMessage) {
+        if (toastId !== undefined) {
+          toast.success(successMessage || "Sucesso!", { id: toastId });
+        } else if (showSuccessToast && successMessage) {
           toast.success(successMessage);
         }
 
@@ -55,8 +67,9 @@ export function useApi<TData = any, TParams = any>() {
 
         setState({ data: null, loading: false, error: errorMsg });
 
-        if (showErrorToast) {
-          console.log('here???')
+        if (toastId !== undefined) {
+          toast.error(errorMsg, { id: toastId });
+        } else if (showErrorToast) {
           toast.error(errorMsg);
         }
 

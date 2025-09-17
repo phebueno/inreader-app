@@ -131,7 +131,12 @@ export function DashboardPage() {
               executeDownload(
                 (id) => uploadService.downloadFile(id),
                 transcription.documentId,
-                { successMessage: "Download iniciado!", showSuccessToast: true }
+                {
+                  loadingMessage: "Preparando o seu arquivo...",
+                  successMessage: "Download iniciado!",
+                  showSuccessToast: true,
+                  showLoadingToast: true,
+                }
               )
             }
             downloadFileFull={() =>
@@ -139,7 +144,12 @@ export function DashboardPage() {
               executeDownload(
                 (id) => uploadService.downloadFile(id, true),
                 transcription.documentId,
-                { successMessage: "Download iniciado!", showSuccessToast: true }
+                {
+                  loadingMessage: "Preparando o seu arquivo...",
+                  successMessage: "Download iniciado!",
+                  showSuccessToast: true,
+                  showLoadingToast: true,
+                }
               )
             }
           />
