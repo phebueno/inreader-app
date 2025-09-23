@@ -14,7 +14,7 @@ export function ProcessingGuide() {
             <div>
               <h3 className="font-medium">1. Upload</h3>
               <p className="text-sm text-muted-foreground">
-                Arraste ou selecione um arquivo de imagem
+                Arraste ou selecione um arquivo de imagem ou pdf
               </p>
             </div>
           </div>

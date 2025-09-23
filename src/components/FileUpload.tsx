@@ -92,7 +92,7 @@ export function FileUpload({ onFileSelect, disabled, selectedFile, onRemove }: F
               </p>
             </div>
             <div className="text-xs text-muted-foreground">
-              Suporte para arquivos de imagem apenas
+              Suporte para arquivos de imagem e pdfs
             </div>
           </div>
         )}
@@ -102,7 +102,7 @@ export function FileUpload({ onFileSelect, disabled, selectedFile, onRemove }: F
           onChange={handleFileInput}
           disabled={disabled}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-          accept="image/*"
+          accept="image/*,application/pdf"
         />
       </div>
     </Card>

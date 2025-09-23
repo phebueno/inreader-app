@@ -1,6 +1,6 @@
 # InReader App
 
-O **InReader App** é uma ferramenta que permite realizar upload, transcrição e análise de dados extraídos de imagens usando Inteligência Artificial, de acordo com as dúvidas do usuário.
+O **InReader App** é uma ferramenta que permite realizar upload, transcrição e análise de dados extraídos de imagens e pdfs usando Inteligência Artificial, de acordo com as dúvidas do usuário.
 
 🔗 Site de demonstração: [https://inreader-app.vercel.app](https://inreader-app.vercel.app)  
 🔗 Repositório do backend: [https://github.com/phebueno/inreader-api](https://github.com/phebueno/inreader-api)
@@ -19,7 +19,7 @@ O **InReader App** é uma ferramenta que permite realizar upload, transcrição 
 - Criação de conta e login de usuário  
 - Dashboard interativo para gerenciar arquivos  
 - Upload de imagens e arquivos para análise  
-- Extração automática de texto de imagens  
+- Extração automática de texto de imagens e pdfs 
 - Análise inteligente dos dados extraídos  
 - Download dos resultados finais das requisições  
 
