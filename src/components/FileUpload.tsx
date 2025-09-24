@@ -45,6 +45,8 @@ export function FileUpload({ onFileSelect, disabled, selectedFile, onRemove }: F
     if (files && files.length > 0) {
       const file = files[0];
       onFileSelect(file);
+
+      e.target.value = ""
     }
   }, [onFileSelect, disabled]);
 

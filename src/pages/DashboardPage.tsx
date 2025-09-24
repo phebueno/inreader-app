@@ -41,14 +41,6 @@ export function DashboardPage() {
   const [transcription, setTranscription] = useState<Transcription | null>(
     null
   );
-
-  const resetProcess = () => {
-    setSelectedFile(null);
-    setProcessingState("idle");
-    setCurrentStep(0);
-    setTranscription(null);
-  };
-
   const handleChatReady = useCallback((data: TranscriptionUpdatePayload) => {
     if (data.status === "DONE") {
       setTranscription(data.transcription);
@@ -59,10 +51,19 @@ export function DashboardPage() {
       resetProcess();
     }
   }, []);
+
   const { connect, disconnect } = useTranscriptionSocket({
     userId: user?.id,
     onUpdate: handleChatReady,
   });
+
+  const resetProcess = () => {
+    setSelectedFile(null);
+    setProcessingState("idle");
+    setCurrentStep(0);
+    setTranscription(null);
+    disconnect();
+  };
 
   const handleFileSelect = async (file: File) => {
     setSelectedFile(file);
@@ -105,7 +106,7 @@ export function DashboardPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg sm:text-xl">Upload de Arquivo</h2>
-              {selectedFile && processingState !== "idle" && (
+              {processingState !== "idle" && (
                 <Button variant="default" onClick={resetProcess}>
                   Novo Upload
                 </Button>
